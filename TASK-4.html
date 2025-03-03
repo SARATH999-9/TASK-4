@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do Home</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5e6ca; 
+            margin: 0;
+        }
+        .container {
+            background: #2a6fdb; 
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 350px;
+        }
+        h1 {
+            color: white;
+            margin-bottom: 15px;
+        }
+        input {
+            padding: 10px;
+            width: 80%;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+        }
+        button {
+            background: #ff9f43;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ff6b00;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 To-Do List</h1>
+        <input type="text" id="taskInput" placeholder="Enter a new task">
+        <input type="datetime-local" id="taskDeadline" placeholder="Set Deadline">
+        <button onclick="addTask()">➕ Add Task</button>
+        <button onclick="showTasks()">📂 Show Tasks</button>
+    </div>
+    <script>
+        function addTask() {
+            let taskInput = document.getElementById("taskInput");
+            let taskDeadline = document.getElementById("taskDeadline");
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            if (taskInput.value.trim() !== "" && taskDeadline.value !== "") {
+                tasks.push({ text: taskInput.value, deadline: taskDeadline.value, completed: false });
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+                taskInput.value = "";
+                taskDeadline.value = "";
+            }
+        }
+        function showTasks() {
+            window.location.href = "tasks.html";
+        }
+    </script>
+</body>
+</html>

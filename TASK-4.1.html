@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks Page</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5e6ca; 
+            margin: 0;
+        }
+        .container {
+            background: #1e3a8a; 
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 600px;
+        }
+        h1 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            font-size: 16px;
+        }
+        .task-details {
+            flex: 2;
+            text-align: left;
+            font-size: 18px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .task-deadline {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            white-space: nowrap; 
+        }
+        .task-options {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: #ddd;
+        }
+        button {
+            background: #ff9f43;
+            color: white;
+            padding: 7px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-size: 14px;
+        }
+        button:hover {
+            background: #ff6b00;
+        }
+        input.edit-input {
+            width: 80%;
+            padding: 6px;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            background: white;
+            color: #333;
+        }
+        .hidden {
+            display: none;
+        }
+        .empty-message {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Your Tasks</h1>
+        <p id="emptyMessage" class="empty-message hidden">No tasks available. Add some from the home page! 📌</p>
+        <ul id="taskList"></ul>
+        <button onclick="goBack()">🏠 Home</button>
+    </div>
+    <script>
+        function loadTasks() {
+            let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+            let taskList = document.getElementById("taskList");
+            let emptyMessage = document.getElementById("emptyMessage");
+            taskList.innerHTML = "";
+            
+            if (tasks.length === 0) {
+                emptyMessage.classList.remove("hidden");
+            } else {
+                emptyMessage.classList.add("hidden");
+                tasks.forEach((task, index) => {
+                    let li = document.createElement("li");
+                    li.innerHTML = `<div class="task-details">
+                                        <input type="text" class="edit-input" id="editTask${index}" value="${task.text}" disabled>
+                                        <div class="task-deadline">⏳ <span>${task.deadline}</span></div>
+                                    </div>
+                                    <div class="task-options">
+                                        <button onclick="enableEdit(${index})">✏️</button>
+                                        <button id="saveBtn${index}" class="hidden" onclick="saveEdit(${index})">💾</button>
+                                        <button onclick="toggleComplete(${index})">✔️</button>
+                                        <button onclick="deleteTask(${index})">🗑️</button>
+                                    </div>`;
+                    taskList.appendChild(li);
+                });
+            }
+        }
+        
+        function enableEdit(index) {
+            let editInput = document.getElementById(`editTask${index}`);
+            let saveBtn = document.getElementById(`saveBtn${index}`);
+            editInput.removeAttribute("disabled");
+            editInput.focus();
+            saveBtn.classList.remove("hidden");
+        }
+        
+        function saveEdit(index) {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+            let updatedText = document.getElementById(`editTask${index}`).value;
+            if (updatedText.trim() !== "") {
+                tasks[index].text = updatedText;
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+                loadTasks();
+            }
+        }
+        
+        function toggleComplete(index) {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+            tasks[index].completed = !tasks[index].completed;
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            loadTasks();
+        }
+        
+        function deleteTask(index) {
+            let tasks = JSON.parse(localStorage.getItem("tasks"));
+            tasks.splice(index, 1);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+            loadTasks();
+        }
+        
+        function goBack() {
+            window.location.href = "index.html";
+        }
+        
+        window.onload = loadTasks;
+    </script>
+</body>
+</html>
